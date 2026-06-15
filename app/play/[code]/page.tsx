@@ -76,7 +76,7 @@ export default function PlayPage({ params }: { params: Promise<{ code: string }>
   const timerPct = room.timerDefault > 0 ? (timeLeft / room.timerDefault) * 100 : 0;
 
   return (
-    <main className="bg-arena min-h-screen flex flex-col p-4 max-w-lg mx-auto">
+    <main className="bg-arena min-h-screen flex flex-col p-6 max-w-2xl mx-auto w-full">
       {/* Header */}
       <div className="flex items-center justify-between mb-4 p-3 rounded-xl" style={{ background: '#111', border: '1px solid #222' }}>
         <G2Logo size={28} />

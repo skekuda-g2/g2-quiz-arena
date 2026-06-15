@@ -29,7 +29,7 @@ export default function GuestPage() {
 
   return (
     <main className="bg-arena bg-grid min-h-screen flex flex-col items-center justify-center p-6">
-      <div className="w-full max-w-sm animate-fadeInUp">
+      <div className="w-full max-w-md animate-fadeInUp">
         <div className="flex justify-center mb-10">
           <G2Logo size={44} />
         </div>

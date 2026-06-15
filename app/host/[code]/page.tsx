@@ -58,7 +58,7 @@ export default function HostGamePage({ params }: { params: Promise<{ code: strin
 
   return (
     <main className="bg-arena min-h-screen p-4">
-      <div className="max-w-5xl mx-auto">
+      <div className="max-w-7xl mx-auto">
         {/* Header */}
         <div className="flex items-center justify-between mb-5 p-3 rounded-xl" style={{ background: '#111', border: '1px solid #222' }}>
           <G2Logo size={32} />
@@ -72,7 +72,7 @@ export default function HostGamePage({ params }: { params: Promise<{ code: strin
           </div>
         </div>
 
-        <div className="grid grid-cols-3 gap-4">
+        <div className="grid grid-cols-4 gap-5">
           {/* Main */}
           <div className="col-span-2 space-y-4">
 
