@@ -51,6 +51,7 @@ export type Question = {
   options: { A: string; B: string; C: string; D: string };
   correct: 'A' | 'B' | 'C' | 'D';
   points: number;
+  image?: string; // URL or base64
 };
 
 export type Player = {
