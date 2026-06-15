@@ -26,7 +26,7 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ code
         }
       });
 
-      // Poll every 1 second
+      // Poll every 2 seconds
       interval = setInterval(async () => {
         try {
           const room = await getRoom(code.toUpperCase());
@@ -42,7 +42,7 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ code
           clearInterval(interval);
           controller.close();
         }
-      }, 1000);
+      }, 2000);
     },
     cancel() {
       clearInterval(interval);
