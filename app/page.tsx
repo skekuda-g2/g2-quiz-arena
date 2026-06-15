@@ -6,17 +6,17 @@ export default function HomePage() {
   const router = useRouter();
 
   return (
-    <main className="bg-arena bg-grid min-h-screen flex flex-col" style={{ alignItems: 'stretch' }}>
+    <div className="bg-arena bg-grid" style={{ minHeight: '100vh' }}>
       {/* Glow orbs */}
       <div className="fixed top-20 left-1/4 w-96 h-96 rounded-full pointer-events-none"
-        style={{ background: 'radial-gradient(circle, rgba(255,73,44,0.12) 0%, transparent 70%)', filter: 'blur(60px)' }} />
+        style={{ background: 'radial-gradient(circle, rgba(255,73,44,0.12) 0%, transparent 70%)', filter: 'blur(60px)', zIndex: 0 }} />
       <div className="fixed bottom-20 right-1/4 w-64 h-64 rounded-full pointer-events-none"
-        style={{ background: 'radial-gradient(circle, rgba(87,70,178,0.08) 0%, transparent 70%)', filter: 'blur(40px)' }} />
+        style={{ background: 'radial-gradient(circle, rgba(87,70,178,0.08) 0%, transparent 70%)', filter: 'blur(40px)', zIndex: 0 }} />
 
-      {/* Nav bar */}
-      <nav className="w-full px-8 py-5 flex items-center justify-between border-b" style={{ borderColor: '#1a1a1a' }}>
+      {/* Nav bar — pinned to top */}
+      <nav style={{ position: 'relative', zIndex: 10, borderBottom: '1px solid #1a1a1a', padding: '16px 32px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
         <G2Logo size={36} />
-        <div className="flex items-center gap-3">
+        <div style={{ display: 'flex', gap: '12px', alignItems: 'center' }}>
           <button onClick={() => router.push('/guest')} className="g2-btn-secondary text-sm px-4 py-2">
             Join Game
           </button>
@@ -27,7 +27,7 @@ export default function HomePage() {
       </nav>
 
       {/* Hero */}
-      <div className="flex-1 flex flex-col items-center justify-center px-8 py-16 text-center">
+      <div style={{ position: 'relative', zIndex: 1, padding: '80px 32px', textAlign: 'center' }}>
         <div className="animate-fadeInUp">
           <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full text-xs font-bold mb-8"
             style={{ background: 'rgba(255,73,44,0.1)', border: '1px solid rgba(255,73,44,0.2)', color: '#FF492C' }}>
@@ -43,43 +43,35 @@ export default function HomePage() {
             Host real-time trivia battles for your team. Load questions live, from CSV, or Google Sheets. No accounts, no setup — just play.
           </p>
 
-          <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-16">
-            <button onClick={() => router.push('/host')}
-              className="g2-btn text-base px-8 py-4 animate-pulse-glow w-full sm:w-auto">
+          <div style={{ display: 'flex', flexWrap: 'wrap', gap: '16px', justifyContent: 'center', marginBottom: '64px' }}>
+            <button onClick={() => router.push('/host')} className="g2-btn text-base px-8 py-4 animate-pulse-glow">
               🎮 Host a Game
             </button>
-            <button onClick={() => router.push('/guest')}
-              className="g2-btn-outline text-base px-8 py-4 w-full sm:w-auto">
+            <button onClick={() => router.push('/guest')} className="g2-btn-outline text-base px-8 py-4">
               🙋 Join a Game
             </button>
           </div>
         </div>
 
         {/* Feature cards */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 w-full max-w-6xl animate-fadeInUp" style={{ animationDelay: '0.15s' }}>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: '16px', maxWidth: '1200px', margin: '0 auto' }}
+          className="animate-fadeInUp">
           {[
             { icon: '✏️', title: 'Type Live', desc: 'Add questions on the fly during setup' },
             { icon: '📄', title: 'CSV Import', desc: 'Upload a spreadsheet with all your questions' },
             { icon: '📊', title: 'Google Sheets', desc: 'Paste a Sheets URL and load instantly' },
             { icon: '🖼️', title: 'Image Support', desc: 'Add images to any question for visual rounds' },
           ].map(f => (
-            <div key={f.title} className="g2-card text-left p-5">
-              <div className="text-3xl mb-3">{f.icon}</div>
-              <div className="font-bold text-white text-sm mb-1">{f.title}</div>
-              <div className="text-gray-600 text-xs leading-relaxed">{f.desc}</div>
+            <div key={f.title} className="g2-card" style={{ textAlign: 'left', padding: '20px' }}>
+              <div style={{ fontSize: '2rem', marginBottom: '12px' }}>{f.icon}</div>
+              <div className="font-bold text-white text-sm" style={{ marginBottom: '4px' }}>{f.title}</div>
+              <div className="text-gray-600" style={{ fontSize: '12px', lineHeight: 1.5 }}>{f.desc}</div>
             </div>
           ))}
         </div>
 
-        {/* Brand colors bar */}
-        <div className="flex gap-2 mt-12">
-          {['#FF492C', '#5746B2', '#288DFF', '#27D3BC', '#FFC800'].map(c => (
-            <div key={c} className="w-6 h-6 rounded-full" style={{ background: c, opacity: 0.6 }} />
-          ))}
-        </div>
-
-        <p className="mt-6 text-gray-700 text-xs">Powered by G2 · Built by IT Team</p>
+        <p className="text-gray-700 text-xs" style={{ marginTop: '48px' }}>Powered by G2 · Built by IT Team</p>
       </div>
-    </main>
+    </div>
   );
 }
