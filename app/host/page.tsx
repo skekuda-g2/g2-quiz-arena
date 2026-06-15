@@ -28,6 +28,7 @@ export default function HostPage() {
   const [questions, setQuestions] = useState<Question[]>([emptyQuestion()]);
   const [sheetsUrl, setSheetsUrl] = useState('');
   const [timer, setTimer] = useState(30);
+  const [lockJoining, setLockJoining] = useState(true);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const fileRef = useRef<HTMLInputElement>(null);
@@ -122,7 +123,7 @@ export default function HostPage() {
       const res = await fetch('/api/room/create', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ questions: valid, timer, hostId: 'host-' + Date.now() }),
+        body: JSON.stringify({ questions: valid, timer, hostId: 'host-' + Date.now(), lockJoining }),
       });
       const data = await res.json();
       if (!res.ok) return setError(data.error || 'Server error');
@@ -159,6 +160,31 @@ export default function HostPage() {
               onChange={e => setTimer(parseInt(e.target.value) || 30)}
               className="g2-input w-20 text-center text-sm" placeholder="sec" />
           </div>
+        </div>
+
+        {/* Lock joining toggle */}
+        <div className="g2-card mb-5" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+          <div>
+            <div style={{ fontWeight: 700, color: 'white', fontSize: '14px', marginBottom: '2px' }}>
+              🔒 Lock joining after game starts
+            </div>
+            <div style={{ color: '#555', fontSize: '12px' }}>
+              {lockJoining ? 'New players cannot join once the game begins' : 'Players can join at any time during the game'}
+            </div>
+          </div>
+          <button
+            onClick={() => setLockJoining(!lockJoining)}
+            style={{
+              width: '52px', height: '28px', borderRadius: '14px', border: 'none',
+              background: lockJoining ? '#FF492C' : '#2a2a2a',
+              position: 'relative', cursor: 'pointer', transition: 'background 0.2s', flexShrink: 0,
+            }}>
+            <div style={{
+              width: '20px', height: '20px', borderRadius: '50%', background: 'white',
+              position: 'absolute', top: '4px', transition: 'left 0.2s',
+              left: lockJoining ? '28px' : '4px',
+            }} />
+          </button>
         </div>
 
         {/* Mode tabs */}

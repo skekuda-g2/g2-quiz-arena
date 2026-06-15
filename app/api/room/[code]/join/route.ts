@@ -10,6 +10,7 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ cod
   const room = await getRoom(code.toUpperCase());
   if (!room) return NextResponse.json({ error: 'Room not found' }, { status: 404 });
   if (room.status === 'finished') return NextResponse.json({ error: 'Game already ended' }, { status: 400 });
+  if (room.lockJoining && room.status !== 'waiting') return NextResponse.json({ error: 'Game already in progress — joining is locked by the host' }, { status: 400 });
 
   const playerName = name.trim();
   if (!room.players[playerName]) {

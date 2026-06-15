@@ -70,6 +70,7 @@ export type GameRoom = {
   timerStart?: number;
   players: Record<string, Player>;
   hostId: string;
+  lockJoining: boolean; // if true, no new players after game starts
   createdAt: number;
   updatedAt: number;
 };
