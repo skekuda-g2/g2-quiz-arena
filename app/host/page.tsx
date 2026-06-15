@@ -51,12 +51,23 @@ export default function HostPage() {
   };
 
   const handleImageFile = (i: number, file: File) => {
-    const reader = new FileReader();
-    reader.onload = ev => {
-      const base64 = ev.target?.result as string;
-      updateQuestion(i, 'image', base64);
+    const img = new Image();
+    const url = URL.createObjectURL(file);
+    img.onload = () => {
+      const canvas = document.createElement('canvas');
+      // Max 800px wide, maintain aspect ratio
+      const maxW = 800;
+      const scale = Math.min(1, maxW / img.width);
+      canvas.width = img.width * scale;
+      canvas.height = img.height * scale;
+      const ctx = canvas.getContext('2d')!;
+      ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+      // Compress to JPEG at 70% quality
+      const compressed = canvas.toDataURL('image/jpeg', 0.7);
+      updateQuestion(i, 'image', compressed);
+      URL.revokeObjectURL(url);
     };
-    reader.readAsDataURL(file);
+    img.src = url;
   };
 
   const handleCSV = (e: React.ChangeEvent<HTMLInputElement>) => {
