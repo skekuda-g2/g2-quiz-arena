@@ -143,7 +143,52 @@ export default function HostPage() {
         </div>
 
         <h1 className="text-3xl font-black text-white mb-1">Create a Game</h1>
-        <p className="text-gray-500 mb-8">Set up your questions and launch the quiz</p>
+        <p className="text-gray-500 mb-6">Set up your questions and launch the quiz</p>
+
+        {/* Capacity info */}
+        <div className="mb-6 p-4 rounded-xl" style={{ background: 'rgba(255,200,0,0.06)', border: '1px solid rgba(255,200,0,0.2)' }}>
+          <div style={{ fontWeight: 700, color: '#FFC800', fontSize: '13px', marginBottom: '12px' }}>
+            ⚡ Free Tier Capacity Guide
+          </div>
+          <div style={{ overflowX: 'auto' }}>
+            <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '12px' }}>
+              <thead>
+                <tr style={{ borderBottom: '1px solid #2a2a2a' }}>
+                  <th style={{ padding: '6px 12px 6px 0', textAlign: 'left', color: '#666', fontWeight: 600 }}>Players</th>
+                  <th style={{ padding: '6px 12px', textAlign: 'center', color: '#666', fontWeight: 600 }}>Text only</th>
+                  <th style={{ padding: '6px 12px', textAlign: 'center', color: '#666', fontWeight: 600 }}>URL images</th>
+                  <th style={{ padding: '6px 12px', textAlign: 'center', color: '#666', fontWeight: 600 }}>Uploaded images</th>
+                  <th style={{ padding: '6px 0 6px 12px', textAlign: 'center', color: '#666', fontWeight: 600 }}>Mixed (text + URL)</th>
+                </tr>
+              </thead>
+              <tbody>
+                {[
+                  { players: '10', text: '20+', url: '20+', upload: '10', mixed: '20+', safe: true },
+                  { players: '30', text: '15', url: '15', upload: '6', mixed: '15', safe: true },
+                  { players: '50', text: '10', url: '10', upload: '4', mixed: '10', safe: true },
+                  { players: '80', text: '6', url: '6', upload: '3', mixed: '6', safe: true },
+                  { players: '100', text: '5', url: '5', upload: '2', mixed: '5', warn: true },
+                  { players: '150', text: '4', url: '4', upload: '⚠️ Avoid', mixed: '4', warn: true },
+                  { players: '200+', text: '3', url: '3', upload: '❌ Not recommended', mixed: '3', danger: true },
+                ].map((row, i) => (
+                  <tr key={row.players} style={{ borderBottom: '1px solid #1a1a1a' }}>
+                    <td style={{ padding: '7px 12px 7px 0', color: row.danger ? '#f87171' : row.warn ? '#FFC800' : '#ccc', fontWeight: 700 }}>
+                      {row.players}
+                    </td>
+                    <td style={{ padding: '7px 12px', textAlign: 'center', color: '#4ade80' }}>{row.text}</td>
+                    <td style={{ padding: '7px 12px', textAlign: 'center', color: '#4ade80' }}>{row.url}</td>
+                    <td style={{ padding: '7px 12px', textAlign: 'center', color: row.upload.toString().includes('⚠️') || row.upload.toString().includes('❌') ? '#f87171' : '#facc15' }}>{row.upload}</td>
+                    <td style={{ padding: '7px 0 7px 12px', textAlign: 'center', color: '#4ade80' }}>{row.mixed}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+          <div style={{ marginTop: '10px', color: '#555', fontSize: '11px', lineHeight: 1.6 }}>
+            💡 <strong style={{ color: '#888' }}>Tip:</strong> Always use <strong style={{ color: '#ccc' }}>image URLs</strong> (Google Drive, Imgur, any public link) instead of uploading files — same visual result, zero performance cost.
+            &nbsp;·&nbsp; Numbers above assume 30s timer per question on Upstash free tier (10K commands/day).
+          </div>
+        </div>
 
         {/* Timer */}
         <div className="g2-card mb-5">
@@ -326,6 +371,28 @@ export default function HostPage() {
             ⚠️ {error}
           </div>
         )}
+
+        {/* Dynamic capacity warning */}
+        {(() => {
+          const validQ = questions.filter(q => q.question.trim()).length;
+          const uploadedImages = questions.filter(q => q.image?.startsWith('data:')).length;
+          if (validQ > 15) return (
+            <div className="mb-4 p-3 rounded-xl text-sm" style={{ background: 'rgba(255,200,0,0.08)', border: '1px solid rgba(255,200,0,0.25)', color: '#FFC800' }}>
+              ⚠️ <strong>{validQ} questions</strong> may exceed free tier limits for large groups (100+ players). Consider reducing to 10 or fewer, or upgrade Upstash.
+            </div>
+          );
+          if (uploadedImages > 0 && validQ > 4) return (
+            <div className="mb-4 p-3 rounded-xl text-sm" style={{ background: 'rgba(255,200,0,0.08)', border: '1px solid rgba(255,200,0,0.25)', color: '#FFC800' }}>
+              ⚠️ <strong>{uploadedImages} uploaded image{uploadedImages > 1 ? 's' : ''}</strong> detected. For 100+ players, keep to 3-4 questions max with uploaded images, or use image URLs instead.
+            </div>
+          );
+          if (uploadedImages > 0) return (
+            <div className="mb-4 p-3 rounded-xl text-sm" style={{ background: 'rgba(40,141,255,0.08)', border: '1px solid rgba(40,141,255,0.2)', color: '#288DFF' }}>
+              💡 {uploadedImages} uploaded image{uploadedImages > 1 ? 's' : ''}. For 150+ players, consider using image URLs instead of uploads for better performance.
+            </div>
+          );
+          return null;
+        })()}
 
         <button onClick={createRoom} disabled={loading}
           className="g2-btn w-full text-base py-4 disabled:opacity-50 animate-pulse-glow">
