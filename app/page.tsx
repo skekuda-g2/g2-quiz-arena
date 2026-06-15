@@ -6,7 +6,7 @@ export default function HomePage() {
   const router = useRouter();
 
   return (
-    <main className="bg-arena bg-grid min-h-screen flex flex-col">
+    <main className="bg-arena bg-grid min-h-screen flex flex-col" style={{ alignItems: 'stretch' }}>
       {/* Glow orbs */}
       <div className="fixed top-20 left-1/4 w-96 h-96 rounded-full pointer-events-none"
         style={{ background: 'radial-gradient(circle, rgba(255,73,44,0.12) 0%, transparent 70%)', filter: 'blur(60px)' }} />
