@@ -1,9 +1,20 @@
 import { Redis } from '@upstash/redis';
 
-export const redis = new Redis({
-  url: process.env.KV_REST_API_URL!,
-  token: process.env.KV_REST_API_TOKEN!,
-});
+const url = process.env.KV_REST_API_URL || 
+            process.env.UPSTASH_REDIS_REST_URL || 
+            process.env.STORAGE_REST_API_URL ||
+            '';
+
+const token = process.env.KV_REST_API_TOKEN || 
+              process.env.UPSTASH_REDIS_REST_TOKEN || 
+              process.env.STORAGE_REST_API_TOKEN ||
+              '';
+
+if (!url || !token) {
+  console.error('Missing Redis env vars. Available:', Object.keys(process.env).filter(k => k.includes('KV') || k.includes('UPSTASH') || k.includes('REDIS') || k.includes('STORAGE')));
+}
+
+export const redis = new Redis({ url, token });
 
 export type Question = {
   id: string;

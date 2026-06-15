@@ -25,8 +25,8 @@ export async function POST(req: NextRequest) {
 
     await setRoom(room);
     return NextResponse.json({ code });
-  } catch (e) {
-    console.error(e);
-    return NextResponse.json({ error: 'Failed to create room' }, { status: 500 });
+  } catch (e: any) {
+    console.error('Create room error:', e?.message || e);
+    return NextResponse.json({ error: e?.message || 'Failed to create room' }, { status: 500 });
   }
 }
