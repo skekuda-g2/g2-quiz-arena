@@ -15,15 +15,13 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ cod
     room.timerStart = Date.now();
   } else if (action === 'reveal') {
     room.status = 'revealing';
-    // Award points
+    // Award exact points as set by host — no time bonus
     const q = room.questions[room.currentQuestion];
     if (q) {
-      const timeLeft = Math.max(0, room.timerDefault - Math.floor((Date.now() - (room.timerStart || Date.now())) / 1000));
       Object.values(room.players).forEach(player => {
         const answer = player.answers[q.id];
         if (answer === q.correct) {
-          const bonus = Math.floor(timeLeft * (q.points / room.timerDefault));
-          player.score += q.points + bonus;
+          player.score += q.points;
         }
       });
     }
