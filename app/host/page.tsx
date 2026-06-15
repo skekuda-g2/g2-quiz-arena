@@ -51,20 +51,34 @@ export default function HostPage() {
   };
 
   const handleImageFile = (i: number, file: File) => {
+    // Reject files over 2MB before processing
+    if (file.size > 2 * 1024 * 1024) {
+      setError('Image too large (max 2MB). Please use a smaller image or paste a URL instead.');
+      return;
+    }
     const img = new Image();
     const url = URL.createObjectURL(file);
     img.onload = () => {
-      const canvas = document.createElement('canvas');
-      // Max 800px wide, maintain aspect ratio
-      const maxW = 800;
-      const scale = Math.min(1, maxW / img.width);
-      canvas.width = img.width * scale;
-      canvas.height = img.height * scale;
-      const ctx = canvas.getContext('2d')!;
-      ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
-      // Compress to JPEG at 70% quality
-      const compressed = canvas.toDataURL('image/jpeg', 0.7);
-      updateQuestion(i, 'image', compressed);
+      try {
+        const canvas = document.createElement('canvas');
+        // Max 600px wide to keep Redis payload small
+        const maxW = 600;
+        const scale = Math.min(1, maxW / img.width);
+        canvas.width = Math.round(img.width * scale);
+        canvas.height = Math.round(img.height * scale);
+        const ctx = canvas.getContext('2d')!;
+        ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+        // Compress to JPEG at 60% quality — keeps it under ~50KB
+        const compressed = canvas.toDataURL('image/jpeg', 0.6);
+        updateQuestion(i, 'image', compressed);
+      } catch (e) {
+        setError('Failed to process image. Try a URL instead.');
+      } finally {
+        URL.revokeObjectURL(url);
+      }
+    };
+    img.onerror = () => {
+      setError('Could not load image file.');
       URL.revokeObjectURL(url);
     };
     img.src = url;
