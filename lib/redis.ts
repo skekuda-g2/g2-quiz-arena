@@ -1,20 +1,49 @@
-import { Redis } from '@upstash/redis';
+// Use direct HTTP calls to Upstash REST API instead of SDK to avoid bundling issues
 
-const url = process.env.KV_REST_API_URL || 
-            process.env.UPSTASH_REDIS_REST_URL || 
-            process.env.STORAGE_REST_API_URL ||
-            '';
+const getUrl = () => process.env.KV_REST_API_URL || process.env.UPSTASH_REDIS_REST_URL || '';
+const getToken = () => process.env.KV_REST_API_TOKEN || process.env.UPSTASH_REDIS_REST_TOKEN || '';
 
-const token = process.env.KV_REST_API_TOKEN || 
-              process.env.UPSTASH_REDIS_REST_TOKEN || 
-              process.env.STORAGE_REST_API_TOKEN ||
-              '';
+async function upstash(command: string[]): Promise<any> {
+  const url = getUrl();
+  const token = getToken();
+  
+  if (!url || !token) {
+    throw new Error(`Missing Redis config. URL: ${!!url}, Token: ${!!token}`);
+  }
 
-if (!url || !token) {
-  console.error('Missing Redis env vars. Available:', Object.keys(process.env).filter(k => k.includes('KV') || k.includes('UPSTASH') || k.includes('REDIS') || k.includes('STORAGE')));
+  const res = await fetch(`${url}`, {
+    method: 'POST',
+    headers: {
+      Authorization: `Bearer ${token}`,
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(command),
+  });
+
+  if (!res.ok) {
+    const text = await res.text();
+    throw new Error(`Upstash error ${res.status}: ${text}`);
+  }
+
+  const data = await res.json();
+  return data.result;
 }
 
-export const redis = new Redis({ url, token });
+export const redis = {
+  async set(key: string, value: any, opts?: { ex?: number }): Promise<void> {
+    const cmd: any[] = ['SET', key, JSON.stringify(value)];
+    if (opts?.ex) cmd.push('EX', opts.ex);
+    await upstash(cmd);
+  },
+  async get<T>(key: string): Promise<T | null> {
+    const result = await upstash(['GET', key]);
+    if (!result) return null;
+    try { return JSON.parse(result) as T; } catch { return result as T; }
+  },
+  async del(key: string): Promise<void> {
+    await upstash(['DEL', key]);
+  },
+};
 
 export type Question = {
   id: string;
