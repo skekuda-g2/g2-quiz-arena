@@ -91,8 +91,8 @@ export default function HostPage() {
       const data = await res.json();
       if (!res.ok) return setError(data.error);
       router.push(`/host/${data.code}`);
-    } catch {
-      setError('Failed to create room');
+    } catch (e: any) {
+      setError('Failed to create room: ' + (e?.message || String(e)));
     } finally {
       setLoading(false);
     }

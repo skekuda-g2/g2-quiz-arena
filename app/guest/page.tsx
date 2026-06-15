@@ -23,8 +23,8 @@ export default function GuestPage() {
       const data = await res.json();
       if (!res.ok) return setError(data.error || 'Failed to join');
       router.push(`/play/${code.toUpperCase()}?name=${encodeURIComponent(name.trim())}`);
-    } catch {
-      setError('Connection error. Please try again.');
+    } catch (e: any) {
+      setError('Connection error: ' + (e?.message || String(e)));
     } finally {
       setLoading(false);
     }
